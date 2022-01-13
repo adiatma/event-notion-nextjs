@@ -34,9 +34,15 @@ const renderBlock = (block) => {
         </pre>
       );
     case "image":
-      return <img src={block?.image?.external?.url} src={block?.image?.external?.url} />;
+      return (
+        <img
+          className="max-w-full h-auto rounded-lg"
+          src={block?.image?.external?.url}
+          alt={block?.image?.external?.url}
+        />
+      );
     default:
-      return null;
+      return <div />;
   }
 };
 
@@ -44,13 +50,14 @@ export default () => {
   const router = useRouter();
   const { eventId } = router.query;
 
-  const { data: pages, error: errorPages } = useSWR(`/api/pages/${eventId}`, fetcher);
+  const { data: page, error: errorPage } = useSWR(`/api/page/${eventId}`, fetcher);
   const { data: blocks, error: errorBlocks } = useSWR(`/api/blocks/${eventId}`, fetcher);
 
-  if (errorBlocks) return null;
-  if (errorPages) return null;
+  // @TODO create error component
+  if (errorBlocks) return <div />;
+  if (errorPage) return <div />;
 
-  if (!pages) return <Loader />;
+  if (!page) return <Loader />;
   if (!blocks) return <Loader />;
 
   return (
@@ -58,28 +65,28 @@ export default () => {
       <div className="rounded overflow-hidden shadow-lg p-5">
         <img
           className="max-w-full h-auto rounded-lg"
-          src={pages?.properties?.Cover?.files[0]?.file?.url}
-          alt={pages?.properties?.Cover?.files[0]?.file?.url}
+          src={page?.properties?.Cover?.files[0]?.file?.url}
+          alt={page?.properties?.Cover?.files[0]?.file?.url}
         />
         <div className="px-2 py-2">
           <p className="font-bold text-xl mb-2">
-            {`${pages?.properties?.EventName?.title[0]?.plain_text}`}
+            {page?.properties?.EventName?.title[0]?.plain_text}
           </p>
-          <div className="text-white inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">{`${
-            dateFormat(pages?.properties?.EventDate?.date?.start)?.fulldate
-          }`}</div>
-          <div
-            className={`text-white inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2`}
-          >{`${dateFormat(pages?.properties?.EventDate?.date?.start)?.countDays}`}</div>
+          <div className="text-white inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">
+            {dateFormat(page?.properties?.EventDate?.date?.start)?.fulldate}
+          </div>
+          <div className="text-white inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">
+            {dateFormat(page?.properties?.EventDate?.date?.start)?.countDays}
+          </div>
           <div className="flex items-center mt-8 mb-8">
             <img
               className="w-10 h-10 rounded-full mr-4"
               src="https://avatars.githubusercontent.com/u/45222198?v=4"
-              alt="Avatar of Jonathan Reinink"
+              alt="Adiatma Kamarudin"
             />
             <div className="text-sm">
               <p className="text-gray-900 leading-none">
-                {pages?.properties?.Speaker?.people[0]?.name}
+                {page?.properties?.Speaker?.people[0]?.name}
               </p>
               <p className="text-gray-600">Speaker</p>
             </div>
@@ -91,9 +98,9 @@ export default () => {
           </div>
         </div>
         <div className="px-4 pt-4 pb-2">
-          {pages?.properties?.EventCategory?.multi_select?.map((tag) => (
+          {page?.properties?.EventCategory?.multi_select?.map((tag) => (
             <span
-              key={tag.id}
+              key={tag?.id}
               className="text-white inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2"
             >{`#${tag?.name} `}</span>
           ))}
