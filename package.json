@@ -1,0 +1,25 @@
+{
+  "name": "event-notion-nextjs",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@notionhq/client": "^0.4.12",
+    "next": "12.0.7",
+    "react": "17.0.2",
+    "react-content-loader": "^6.1.0",
+    "react-dom": "17.0.2",
+    "swr": "^1.1.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.2",
+    "eslint": "8.6.0",
+    "eslint-config-next": "12.0.7",
+    "postcss": "^8.4.5",
+    "tailwindcss": "^3.0.13"
+  }
+}
