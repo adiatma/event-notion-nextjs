@@ -1,8 +1,27 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import useSWR from "swr";
+
+import styles from "../styles/Home.module.css";
+
+const fetcher = (...args) => fetch(...args).then((res) => res.json());
+
+// @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString
+const dateFormat = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("id-ID", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
 export default function Home() {
+  const { data, error } = useSWR(`/api/db`, fetcher);
+
+  if (error) return <div>{`Ooops... error`}</div>;
+
   return (
     <div className={styles.container}>
       <Head>
@@ -17,38 +36,23 @@ export default function Home() {
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          Get started by editing <code className={styles.code}>pages/index.js</code>
         </p>
 
         <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          {data?.map((database) => (
+            <a key={database.id} href={`/event/${database.id}`} className={styles.card}>
+              <div>
+                {database?.properties?.EventCategory?.multi_select?.map((tags) => (
+                  <span key={tags.id}>{`#${tags?.name} `}</span>
+                ))}
+              </div>
+              <p className={styles.date}>{`${dateFormat(
+                database?.properties?.EventDate?.date?.start
+              )} - ${dateFormat(database?.properties?.EventDate?.date?.end)}`}</p>
+              <h2>{database?.properties?.EventName?.title[0].text?.content}</h2>
+            </a>
+          ))}
         </div>
       </main>
 
@@ -58,12 +62,12 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
+  );
 }
