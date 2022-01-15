@@ -1,11 +1,3 @@
-## Getting Started
+## event-notion-nextjs
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+https://docs.google.com/presentation/d/1ES_K9rdyDyTkLEwfmPn6WxcG5jekA2Qb5G1r9OlXwxY/edit?usp=sharing
